@@ -3,6 +3,7 @@ package conta;
 import java.util.Scanner;
 
 import conta.util.Cores;
+import conta.controller.ContaController;
 import conta.model.ContaCorrente;
 import conta.model.ContaPoupanca;
 
@@ -11,24 +12,29 @@ public class Menu {
 	public static void main(String[] args) {
 
 		Scanner input = new Scanner(System.in);
+		
+		ContaController contas = new ContaController();
 
-		// Teste da Classe Conta Corrente
-		ContaCorrente cc1 = new ContaCorrente(1, 123, 1, "José da Silva", 0.0f, 1000.0f);
-		cc1.Visualizar();
-		cc1.Sacar(12000.0f);
-		cc1.Visualizar();
-		cc1.Depositar(5000.0f);
-		cc1.Visualizar();
-
-		// Teste da Classe Conta Poupança
-		ContaPoupanca cp1 = new ContaPoupanca(2, 123, 2, "Maria dos Santos", 100000.0f, 15);
-		cp1.Visualizar();
-		cp1.Sacar(1000.0f);
-		cp1.Visualizar();
-		cp1.Depositar(5000.0f);
-		cp1.Visualizar();
-
-		int opcao;
+		
+		int opcao, numero, agencia, tipo, aniversario;
+		String titular; 
+		float saldo, limite;
+		
+		System.out.println("Criar Contas");
+		
+		ContaCorrente cc1 = new ContaCorrente(contas.gerarNumero(), 123, 1, "Catiane Souza", 1000f, 100.0f);
+		contas.cadastrar(cc1);
+		
+		ContaCorrente cc2 = new ContaCorrente(contas.gerarNumero(), 124, 1, "Graziele Maria", 2000f, 100.0f);
+		contas.cadastrar(cc2);
+		
+		ContaPoupanca cp1 = new ContaPoupanca(contas.gerarNumero(), 125, 2, "Mariana Santos", 4000f, 12);
+		contas.cadastrar(cp1);
+		
+		ContaPoupanca cp2 = new ContaPoupanca(contas.gerarNumero(), 126, 2, "Juliana Ramos", 8000f, 15);
+		contas.cadastrar(cp2);
+		
+		contas.listarTodas();
 
 		while (true) {
 
@@ -57,10 +63,40 @@ public class Menu {
 
 			case 1:
 				System.out.println(Cores.TEXT_WHITE_BOLD + "Criar Conta");
+				
+				System.out.println("Digite o número da Agência: ");
+				agencia = input.nextInt();
+				System.out.println("Digite o nome do Titular: ");
+				input.skip("\\R");
+				titular = input.nextLine();
+				
+				do {
+					System.out.println("Digite o tipo de Conta (1-CC ou 2-CP): ");
+					tipo = input.nextInt();
+				} while (tipo < 1 && tipo > 2);
+				
+				System.out.println("Digite o saldo da Conta (R$): ");
+				saldo = input.nextFloat();
+				
+				switch(tipo) {
+				case 1 -> {
+					System.out.println("Digite o Limite de Crédito (R$): ");
+					limite = input.nextFloat();
+					contas.cadastrar(new ContaCorrente(contas.gerarNumero(), agencia, tipo,
+							titular, saldo, limite));
+				}
+				case 2 -> {
+					System.out.println("Digite o dia do Aniversário da Conta: ");
+					aniversario = input.nextInt();
+					contas.cadastrar(new ContaPoupanca(contas.gerarNumero(), agencia, tipo,
+							titular, saldo, aniversario));
+				}
+				}
 				break;
 
 			case 2:
 				System.out.println(Cores.TEXT_WHITE_BOLD + "Listar todas as Contas");
+				contas.listarTodas();
 				break;
 
 			case 3:
